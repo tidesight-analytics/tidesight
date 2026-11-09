@@ -1,0 +1,119 @@
+name: Sync website to tidesight-analytics.github.io
+
+# Builds the Tidesight website and its live demo (tools/build_site.py), and mirrors the
+# output into the tidesight-analytics/tidesight-analytics.github.io repo on every change
+# and every six hours (so that the demo's simulated visits always end today).
+#
+# ──────────────────────────────────────────────────────────────────────────
+# Setup: a fine-grained Personal Access Token with Contents: read and write on
+# tidesight-analytics/tidesight-analytics.github.io, stored in this repo as WEBSITE_DEPLOY_TOKEN.
+# ──────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'dashboard/**'
+      - 'server/python/tidesight/**'
+      - 'tools/demo.py'
+      - 'tools/build_site.py'
+      - 'docs/images/**'
+      - '.github/workflows/sync-website.yml'
+  schedule:
+    - cron: "23 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-website
+  cancel-in-progress: false
+
+jobs:
+  build-and-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install Pyodide dependency
+        run: npm ci
+        working-directory: site
+
+      - name: Build the website and the live demo
+        run: python tools/build_site.py --out _site
+
+      - name: Inject subpath redirects and 404 handler
+        run: |
+          touch _site/.nojekyll
+          mkdir -p _site/tidesight _site/Tidesight
+          cat << 'EOF' > _site/tidesight/index.html
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Tidesight</title>
+            <meta http-equiv="refresh" content="0; url=https://tidesight-analytics.github.io/">
+            <link rel="canonical" href="https://tidesight-analytics.github.io/">
+            <script>
+              window.location.replace("https://tidesight-analytics.github.io/" + window.location.search + window.location.hash);
+            </script>
+          </head>
+          <body>
+            <p>Redirecting to <a href="https://tidesight-analytics.github.io/">tidesight-analytics.github.io</a>...</p>
+          </body>
+          </html>
+          EOF
+
+          cp _site/tidesight/index.html _site/Tidesight/index.html
+
+          cat << 'EOF' > _site/404.html
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Tidesight</title>
+            <script>
+              (function() {
+                var path = window.location.pathname;
+                var match = path.match(/^\/tidesight(?:\/(.*))?$/i);
+                if (match) {
+                  var sub = match[1] || '';
+                  window.location.replace("https://tidesight-analytics.github.io/" + sub + window.location.search + window.location.hash);
+                  return;
+                }
+                window.location.replace("https://tidesight-analytics.github.io/");
+              })();
+            </script>
+          </head>
+          <body>
+            <p>Redirecting to <a href="https://tidesight-analytics.github.io/">tidesight-analytics.github.io</a>...</p>
+          </body>
+          </html>
+          EOF
+
+      - name: Mirror to tidesight-analytics.github.io
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.WEBSITE_DEPLOY_TOKEN }}
+          external_repository: tidesight-analytics/tidesight-analytics.github.io
+          publish_branch: main
+          publish_dir: ./_site
+          force_orphan: true
+          user_name: 'tidesight-bot'
+          user_email: 'bot@users.noreply.github.com'
+          commit_message: 'Sync from tidesight-analytics/tidesight@${{ github.sha }}'
