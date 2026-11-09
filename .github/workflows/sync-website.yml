@@ -109,7 +109,7 @@ jobs:
       - name: Mirror to tidesight-analytics.github.io
         uses: peaceiris/actions-gh-pages@v4
         with:
-          personal_token: ${{ secrets.WEBSITE_DEPLOY_TOKEN }}
+          personal_token: ${{ secrets.WEBSITE_DEPLOY_TOKEN_TIDESIGHT || secrets.WEBSITE_DEPLOY_TOKEN }}
           external_repository: tidesight-analytics/tidesight-analytics.github.io
           publish_branch: main
           publish_dir: ./_site
