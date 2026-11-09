@@ -7,4 +7,4 @@ when they are absent.
 
 __version__ = "0.3.4"
 # Where Tidesight is published: the dashboard links to it, and updates.py looks there for new releases.
-__repository__ = "https://github.com/tidesight-analytics/tidesight-analytics.github.io"
+__repository__ = "https://github.com/tidesight-analytics/tidesight"

@@ -9,7 +9,7 @@ Traffic ebbs and flows like a tide; *sight* is the insight you get from watching
 
 [**Live demo**](https://tidesight-analytics.github.io/demo/#/overview?site=demo) · [Website](https://tidesight-analytics.github.io/) · [Get started](#get-started) · [Documentation](#documentation)
 
-[![Latest release](https://img.shields.io/github/v/release/tidesight-analytics/tidesight-analytics.github.io?sort=semver&color=2a78d6)](https://github.com/tidesight-analytics/tidesight-analytics.github.io/releases/latest)
+[![Latest release](https://img.shields.io/github/v/release/tidesight-analytics/tidesight?sort=semver&color=2a78d6)](https://github.com/tidesight-analytics/tidesight/releases/latest)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-0f2236)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-0f2236)](server/python)
 [![Live demo](https://img.shields.io/badge/live%20demo-in%20your%20browser-1baf7a)](https://tidesight-analytics.github.io/demo/#/overview?site=demo)
@@ -40,7 +40,7 @@ Data-rich by default, every family of data points has a per-site switch, and a p
 Python 3.9 or later, nothing else.
 
 ```sh
-git clone https://github.com/tidesight-analytics/tidesight-analytics.github.io.git && cd tidesight-analytics.github.io
+git clone https://github.com/tidesight-analytics/tidesight.git && cd tidesight-analytics.github.io
 python tools/demo.py --out demo-data
 python server/python/devserver.py --config demo-data/tidesight.toml --no-auth --port 8790
 ```
@@ -55,7 +55,7 @@ On Dreamhost or any host with Python (FastCGI or CGI) and cron, everything lives
 
 ```sh
 cd ~/stats.example.com        # the website's folder
-curl -L https://github.com/tidesight-analytics/tidesight-analytics.github.io/releases/latest/download/tidesight.tar.gz | tar xz
+curl -L https://github.com/tidesight-analytics/tidesight/releases/latest/download/tidesight.tar.gz | tar xz
 cp app/server/python/tidesight.fcgi . && chmod 755 tidesight.fcgi
 cp app/server/python/web.htaccess .htaccess
 cp app/config/tidesight.example.toml tidesight.toml    # then set public_url, and add the cron lines

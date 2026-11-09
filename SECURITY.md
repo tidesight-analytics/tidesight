@@ -4,7 +4,7 @@ Tidesight stores what visitors do on websites, so its security matters to more p
 
 ## Reporting a vulnerability
 
-Please report it privately: on GitHub, **Security → Report a vulnerability** ([private vulnerability reporting](https://github.com/tidesight-analytics/tidesight-analytics.github.io/security/advisories/new)). Do not open a public issue for it.
+Please report it privately: on GitHub, **Security → Report a vulnerability** ([private vulnerability reporting](https://github.com/tidesight-analytics/tidesight/security/advisories/new)). Do not open a public issue for it.
 
 Say what an attacker can do, against which component (tracker, collector, dashboard, a connector, the jobs), and how to reproduce it. You will get an answer within a week; a fix comes with a test that fails without it, and a release.
 
